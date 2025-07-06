@@ -16,9 +16,3 @@ export interface MovieResponse {
     total_results: number;
 }
 
-export interface Movie {
-    id: number;
-    title: string;
-    poster_path: string;
-    overview: string;
-}

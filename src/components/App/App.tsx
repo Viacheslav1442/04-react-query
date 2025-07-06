@@ -8,13 +8,9 @@ import css from './App.module.css';
 
 export default function App() {
     const [page, setPage] = useState(1);
-    const [query, setQuery] = useState('matrix');
+    const query = 'matrix';
 
-    const {
-        data,
-        isLoading,
-        isError,
-    } = useQuery<MovieResponse>({
+    const { data, isLoading, isError } = useQuery<MovieResponse>({
         queryKey: ['movies', query, page],
         queryFn: () => fetchMovies(query, page),
         keepPreviousData: true,

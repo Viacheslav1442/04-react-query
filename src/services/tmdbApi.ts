@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { MovieResponse } from '../types/movie'; // ✅ type-only import
+import type { MovieResponse } from '../types/movie';
 
 const API_KEY = import.meta.env.VITE_API_TOKEN;
 const BASE_URL = 'https://api.themoviedb.org/3';
@@ -12,5 +12,6 @@ export const fetchMovies = async (query: string, page = 1): Promise<MovieRespons
             page,
         },
     });
+
     return response.data;
 };
