@@ -1,69 +1,47 @@
-import { useState } from "react";
-import { toast, Toaster } from "react-hot-toast";
-import SearchBar from "../SearchBar/SearchBar.tsx";
-import MovieGrid from "../MovieGrid/MovieGrid.tsx";
-import type { Movie } from "../../types/movie.ts";
-import * as movieService from '../../services/movieService.ts'
-import Loader from "../Loader/Loader.tsx";
-import ErrorMessage from "../ErrorMessage/ErrorMessage.tsx";
-import MovieModal from "../MovieModal/MovieModal.tsx";
+import { useQuery } from '@tanstack/react-query';
+import { useState } from 'react';
+import { fetchMovies } from '../../services/tmdbApi';
+import MovieGrid from '../MovieGrid/MovieGrid';
+import ReactPaginate from 'react-paginate';
+import css from './App.module.css';
 
-function App() {
-    const [movies, setMovies] = useState<Movie[]>([])
-    const [loading, setLoading] = useState<boolean>(false)
-    const [error, setError] = useState<string | null>(null)
-    const [currentMovie, setCurrentMovie] = useState<Movie | null>(null)
-    const handleSubmit = (query: string) => {
-        setMovies([])
+export default function App() {
+    const [page, setPage] = useState(1);
+    const [query, setQuery] = useState('matrix'); // або з SearchBar
 
-        setLoading(true);
-        setError(null)
+    const { data, isLoading, isError } = useQuery({
+        queryKey: ['movies', query, page],
+        queryFn: () => fetchMovies(query, page),
+        keepPreviousData: true,
+    });
 
-        movieService.fetchMovie(query).then(data => {
-            if (!data.results.length) {
-                toast.error('No movies found for your request')
-            }
-
-            setMovies(data.results);
-
-        }).catch(e => {
-            setError(e.message)
-        }).finally(() => setLoading(false))
+    const handlePageClick = ({ selected }: { selected: number }) => {
+        setPage(selected + 1);
     };
 
-    function onSelect(movie: Movie): void {
-        setCurrentMovie(movie)
-    }
-
-    function onClose() {
-        setCurrentMovie(null)
-    }
-
-    if (error) {
-        return (
-            <>
-                <SearchBar onSubmit={handleSubmit} />
-                {loading ? (<Loader />) : (<ErrorMessage message={error} />)}
-                <Toaster position="top-center" />
-            </>
-        )
-    }
-
     return (
-        <>
-            <SearchBar onSubmit={handleSubmit} />
-            {loading ? (<Loader />) : (<MovieGrid
-                movies={movies}
-                onSelect={onSelect}
-            />)}
-            {currentMovie && (
-                <MovieModal
-                    movie={currentMovie}
-                    onClose={onClose}
-                />)}
-            <Toaster position="top-center" />
-        </>
-    )
+        <div>
+            {/* SearchBar тут, якщо є */}
+            {isLoading && <p>Loading...</p>}
+            {isError && <p>Error...</p>}
+            {data && (
+                <>
+                    <MovieGrid movies={data.results} />
+                    {data.total_pages > 1 && (
+                        <ReactPaginate
+                            pageCount={data.total_pages}
+                            pageRangeDisplayed={5}
+                            marginPagesDisplayed={1}
+                            onPageChange={handlePageClick}
+                            forcePage={page - 1}
+                            containerClassName={css.pagination}
+                            activeClassName={css.active}
+                            nextLabel="→"
+                            previousLabel="←"
+                        />
+                    )}
+                </>
+            )}
+        </div>
+    );
 }
-
-export default App
