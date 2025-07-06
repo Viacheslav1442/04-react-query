@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { MovieResponse } from '../types/movie';
+import type { MovieResponse } from '../types/movie'; // ✅ type-only import
 
 const API_KEY = import.meta.env.VITE_API_TOKEN;
 const BASE_URL = 'https://api.themoviedb.org/3';

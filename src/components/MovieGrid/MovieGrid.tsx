@@ -1,34 +1,20 @@
-import css from './MovieGrid.module.css'
-import type { Movie } from "../../types/movie.ts";
-import { BASE_IMAGE_PATH, SIZE } from "../../constants";
+import type { Movie } from '../../types/movie';
 
-export interface MovieGridProps {
-    movies: Movie[],
-    onSelect: (movie: Movie) => void
+interface MovieGridProps {
+    movies: Movie[];
+    onSelect?: (movie: Movie) => void; // 👈 зроби необов'язковим
 }
 
 const MovieGrid = ({ movies, onSelect }: MovieGridProps) => {
     return (
-        <ul className={css.grid}>
-            {movies.map(movie => (
-                <li key={movie.id}
-                    onClick={() => onSelect(movie)}
-                >
-                    <div className={css.card}>
-                        <img
-                            className={css.image}
-                            src={`${BASE_IMAGE_PATH}${SIZE.w500}${movie.poster_path}`}
-                            alt="movie title"
-                            loading="lazy"
-                        />
-                        <h2 className={css.title}>{movie.title}</h2>
-                    </div>
-                </li>
+        <div>
+            {movies.map((movie) => (
+                <div key={movie.id} onClick={() => onSelect?.(movie)}>
+                    {movie.title}
+                </div>
             ))}
-        </ul>
-
+        </div>
     );
 };
-
 
 export default MovieGrid;
