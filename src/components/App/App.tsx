@@ -13,7 +13,7 @@ export default function App() {
     const { data, isLoading, isError } = useQuery<MovieResponse>({
         queryKey: ['movies', query, page],
         queryFn: () => fetchMovies(query, page),
-        keepPreviousData: true,
+
     });
 
     const handlePageClick = ({ selected }: { selected: number }) => {
@@ -46,4 +46,3 @@ export default function App() {
         </div>
     );
 }
-
