@@ -31,7 +31,7 @@ export default function App() {
                     {data.total_pages > 1 && (
                         <ReactPaginate
                             pageCount={data.total_pages}
-                            pageRangeDisplayed={5}
+                            pageRangeDisplayed={10}
                             marginPagesDisplayed={1}
                             onPageChange={handlePageClick}
                             forcePage={page - 1}
