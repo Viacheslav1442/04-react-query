@@ -8,7 +8,7 @@ import ReactPaginate from 'react-paginate';
 import css from './App.module.css';
 
 export default function App() {
-    const [query, setQuery] = useState('matrix');
+    const [query, setQuery] = useState('');
     const [searchTerm, setSearchTerm] = useState(query);
     const [page, setPage] = useState(1);
 
