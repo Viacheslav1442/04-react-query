@@ -3,16 +3,18 @@ import { useState } from 'react';
 import { fetchMovies } from '../../services/tmdbApi';
 import type { MovieResponse } from '../../types/movie';
 import MovieGrid from '../MovieGrid/MovieGrid';
+import SearchBar from '../SearchBar/SearchBar';
 import ReactPaginate from 'react-paginate';
 import css from './App.module.css';
 
 export default function App() {
+    const [query, setQuery] = useState('matrix');
+    const [searchTerm, setSearchTerm] = useState(query);
     const [page, setPage] = useState(1);
-    const query = 'matrix';
 
     const { data, isLoading, isError } = useQuery<MovieResponse>({
-        queryKey: ['movies', query, page],
-        queryFn: () => fetchMovies(query, page),
+        queryKey: ['movies', searchTerm, page],
+        queryFn: () => fetchMovies(searchTerm, page),
 
     });
 
@@ -20,8 +22,19 @@ export default function App() {
         setPage(selected + 1);
     };
 
+    const handleSearch = () => {
+        setPage(1);
+        setSearchTerm(query);
+    };
+
     return (
         <div>
+            <SearchBar
+                query={query}
+                onChange={setQuery}
+                onSubmit={handleSearch}
+            />
+
             {isLoading && <p>Loading...</p>}
             {isError && <p>Error occurred</p>}
 
@@ -46,3 +59,5 @@ export default function App() {
         </div>
     );
 }
+
+
