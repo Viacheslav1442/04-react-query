@@ -44,7 +44,7 @@ export default function App() {
             <SearchBar action={handleSearch} />
 
             {isLoading && <Loader />}
-            {isError && <ErrorMessage />}
+            {isError && <ErrorMessage message="while fetching movies" />}
 
             {isSuccess && data.results.length > 0 && (
                 <>
