@@ -1,15 +1,11 @@
 import { toast } from 'react-hot-toast';
 
 interface SearchBarProps {
-    action: (formData: FormData) => void;
+    onSubmit: (query: string) => void;
 }
 
-export default function SearchBar({ action }: SearchBarProps) {
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-
-        const form = e.currentTarget;
-        const formData = new FormData(form);
+export default function SearchBar({ onSubmit }: SearchBarProps) {
+    const action = (formData: FormData) => {
         const query = formData.get('query')?.toString().trim();
 
         if (!query) {
@@ -17,12 +13,11 @@ export default function SearchBar({ action }: SearchBarProps) {
             return;
         }
 
-        action(formData);
-        form.reset(); // скидання поля
+        onSubmit(query);
     };
 
     return (
-        <form onSubmit={handleSubmit}>
+        <form action={action}>
             <input type="text" name="query" placeholder="Search movies..." />
             <button type="submit">Search</button>
         </form>

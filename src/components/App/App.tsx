@@ -15,14 +15,7 @@ export default function App() {
     const [page, setPage] = useState(1);
     const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
 
-    const { data, isLoading, isError, isSuccess, isFetching } = useQuery({
-        queryKey: ['movies', searchTerm, page],
-        queryFn: () => fetchMovies(searchTerm, page),
-        enabled: !!searchTerm,
-    });
-
-    const handleSearch = (formData: FormData) => {
-        const query = formData.get('query')?.toString().trim();
+    const handleSearch = (query: string) => {
         if (!query) return;
         setPage(1);
         setSearchTerm(query);
@@ -32,8 +25,15 @@ export default function App() {
         setPage(selected + 1);
     };
 
+    const { data, isLoading, isError, isSuccess, isFetching } = useQuery({
+        queryKey: ['movies', searchTerm, page],
+        queryFn: () => fetchMovies(searchTerm, page),
+        enabled: !!searchTerm,
+        placeholderData: (prev) => prev, // для безперервної пагінації
+    });
+
     useEffect(() => {
-        if (isSuccess && data.results.length === 0) {
+        if (isSuccess && data?.results.length === 0) {
             toast('No movies found. Try a different search.');
         }
     }, [isSuccess, data]);
@@ -41,12 +41,12 @@ export default function App() {
     return (
         <div>
             <Toaster position="top-right" />
-            <SearchBar action={handleSearch} />
+            <SearchBar onSubmit={handleSearch} />
 
             {isLoading && <Loader />}
             {isError && <ErrorMessage message="while fetching movies" />}
 
-            {isSuccess && data.results.length > 0 && (
+            {isSuccess && data?.results.length > 0 && (
                 <>
                     <MovieGrid movies={data.results} onSelect={setSelectedMovie} />
                     {data.total_pages > 1 && (
